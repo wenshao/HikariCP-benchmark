@@ -213,6 +213,7 @@ public class BenchBase
     {
         DruidDataSource ds = new DruidDataSource();
         ds.setUrl(jdbcUrl);
+        ds.setDriverClassName("com.zaxxer.hikari.benchmark.stubs.StubDriver");
         ds.setUsername("brettw");
         ds.setPassword("");
         ds.setInitialSize(MIN_POOL_SIZE);

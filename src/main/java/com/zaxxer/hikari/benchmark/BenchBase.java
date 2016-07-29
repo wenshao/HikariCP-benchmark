@@ -36,6 +36,7 @@ import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.infra.BenchmarkParams;
 import org.vibur.dbcp.ViburDBCPDataSource;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -47,7 +48,7 @@ public class BenchBase
 {
     protected static final int MIN_POOL_SIZE = 0;
 
-    @Param({ "hikari", "dbcp", "dbcp2", "tomcat", "c3p0", "vibur", "one" })
+    @Param({ "hikari", "dbcp", "dbcp2", "tomcat", "c3p0", "vibur", "one", "druid" })
     public String pool;
 
     @Param({ "32" })
@@ -86,6 +87,9 @@ public class BenchBase
             break;
         case "dbcp":
             setupDbcp();
+            break;
+        case "druid":
+            setupDruid();
             break;
         case "dbcp2":
             setupDbcp2();
@@ -201,6 +205,24 @@ public class BenchBase
         ds.setTestOnBorrow(true);
         ds.setCacheState(true);
         ds.setFastFailValidation(true);
+
+        DS = ds;
+    }
+    
+    protected void setupDruid()
+    {
+        DruidDataSource ds = new DruidDataSource();
+        ds.setUrl(jdbcUrl);
+        ds.setUsername("brettw");
+        ds.setPassword("");
+        ds.setInitialSize(MIN_POOL_SIZE);
+        ds.setMinIdle(MIN_POOL_SIZE);
+        ds.setMaxIdle(maxPoolSize);
+        ds.setMaxActive(maxPoolSize);
+
+        ds.setDefaultAutoCommit(false);
+        ds.setTestOnBorrow(true);
+        ds.setValidationQuery("SELECT 1");
 
         DS = ds;
     }
